@@ -18,9 +18,13 @@ namespace eCommerce.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+
+            List<VideoGame> allGames =
+                await VideoGameDb.GetAllGames(_context);
+            return View(allGames);
         }
         
         [HttpGet]
@@ -30,16 +34,36 @@ namespace eCommerce.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(VideoGame game)
+        public async Task<IActionResult> Add(VideoGame game)
         {
             if (ModelState.IsValid)
             {
-                VideoGameDb.Add(game, _context);
+                await VideoGameDb.Add(game, _context);
                 return RedirectToAction("Index");
             }
             
             // Return view with model including error messages.
             return View(game);
+        }
+
+        public async Task<IActionResult> Update(int id)
+        {
+            VideoGame game =
+                await VideoGameDb.GetGameById(id, _context);
+            return View(game);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(VideoGame g)
+        {
+            if (ModelState.IsValid)
+            {
+                await VideoGameDb.UpdateGame(g, _context);
+                return RedirectToAction("Index");
+            }
+
+            // If there are any errors show the user the form again.
+            return View(g);
         }
     }
 }
