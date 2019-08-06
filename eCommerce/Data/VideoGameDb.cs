@@ -10,6 +10,48 @@ namespace eCommerce.Data
     public static class VideoGameDb
     {
         /// <summary>
+        /// Returns one page worth of products, products are sorted alphabetically by title.
+        /// </summary>
+        /// <param name="context">Database context</param>
+        /// <param name="pageNum">Page number of the products you want</param>
+        /// <param name="pageSize">Number of products per page</param>
+        /// <returns></returns>
+        public static async Task<List<VideoGame>> GetGamesByPage(GameContext context, int pageNum, int pageSize)
+        {
+
+            // Make sure to call skip before take.
+            // Be sure to call order bby first.
+            List<VideoGame> games = await context.VideoGames
+                                                 .OrderBy(vg => vg.Title)
+                                                 .Skip((pageNum - 1) * pageSize)
+                                                 .Take(pageSize)
+                                                 .ToListAsync();
+
+            // You could also just do return await
+            return games;
+        }
+
+
+        /// <summary>
+        /// Returns the total number of pages needed to have <paramref name="pAGE_SIZE"/> amount of products per page.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="pAGE_SIZE"></param>
+        /// <returns></returns>
+        public static async Task<int> GetTotalPages(GameContext context, int pAGE_SIZE)
+        {
+            int totalNumGames = await context.VideoGames.CountAsync();
+            
+            // Partial number of pages 
+            
+            double pages = (double)totalNumGames / pAGE_SIZE;
+            return (int)Math.Ceiling(pages);
+
+        }
+
+
+
+        /// <summary>
         /// Adds a VideoGame to the data store and sets
         /// the ID value
         /// </summary>
