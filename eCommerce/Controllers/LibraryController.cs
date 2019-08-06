@@ -18,13 +18,21 @@ namespace eCommerce.Controllers
             _context = context;
         }
 
+
+        
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id) 
         {
 
-            List<VideoGame> allGames =
-                await VideoGameDb.GetAllGames(_context);
-            return View(allGames);
+            // id is the page number coming in
+            // ?? is the null-coalescing operator
+            // If id is not null set page to it, or if null use 1
+            // same as using a if/else
+            int page = id ?? 1;
+
+            List<VideoGame> games = await VideoGameDb.GetGamesByPage(_context, page, 3);
+            return View(games);
+
         }
         
         [HttpGet]
