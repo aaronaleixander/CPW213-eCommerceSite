@@ -36,5 +36,30 @@ namespace eCommerce.Controllers
             }
             return View(m);
         }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                bool isMember = await MemberDb.IsLoginValid(model, _context);
+                if (isMember)
+                {
+                    TempData["Message"] = "Logged in sucessfully";
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    // Credentials Invalid
+                    ModelState.AddModelError(string.Empty, "Im sorry your login was invalid.");
+                }
+            }
+            return View(model);
+        }
     }
 }
