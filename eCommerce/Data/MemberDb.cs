@@ -15,7 +15,7 @@ namespace eCommerce.Data
         /// <param name="context">Database Context used</param>
         /// <param name="m">New member to be added</param>
         /// <returns></returns>
-        public static async Task<Member> Add(GameContext context, Member m)
+        public async static  Task<Member> Add(GameContext context, Member m)
         {
             context.Members.Add(m);
             await context.SaveChangesAsync();
@@ -30,7 +30,7 @@ namespace eCommerce.Data
         /// <param name="model"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static async Task<Member> IsLoginValid(LoginViewModel model, GameContext context)
+        public async static Task<Member> IsLoginValid(LoginViewModel model, GameContext context)
         {
             return await (from m in context.Members
                              where m.Username == model.UsernameOrEmail || m.EmailAddress == model.UsernameOrEmail
