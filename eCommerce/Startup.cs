@@ -23,6 +23,8 @@ namespace eCommerce
 
         public IConfiguration Configuration { get; }
 
+        // You could call Services AddSession if you have the method and is enabled. -- method not documented here.
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -33,6 +35,17 @@ namespace eCommerce
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            // Configure Session Management
+            //services.AddSingleton<IHttpContextAccessor, IHttpContextAccessor>();
+            // Following line same as above line.
+            services.AddHttpContextAccessor();
+            services.AddDistributedMemoryCache(); // Stores session in-memory
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.IsEssential = true;
+            });
+            
             string connection = Configuration.GetConnectionString("GameDbConnection");
 
             // Register DB Context - using dependancy injection
@@ -70,6 +83,7 @@ namespace eCommerce
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSession(); // Use Configured Session after it is configured.
 
             app.UseMvc(routes =>
             {
