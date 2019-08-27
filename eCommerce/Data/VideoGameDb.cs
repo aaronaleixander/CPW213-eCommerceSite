@@ -31,6 +31,65 @@ namespace eCommerce.Data
             return games;
         }
 
+        /// <summary>
+        /// Searches for games that match the criteria and returns all games that match
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        public async static Task<List<VideoGame>> Search(GameContext context, SearchCriteria criteria)
+        {
+            // SELECT * FROM VideoGames
+            // but this does not query the database.
+            IQueryable<VideoGame> allGames = from g
+                                             in context.VideoGames
+                                             select g;
+            // MinPrice search
+            if (criteria.MinPrice.HasValue)
+            {
+                // Adds to the where clause.
+                // LINQ figures alot of the unter the hood work for you.
+                // Price >= criteria.MinPrice
+                allGames = from g
+                           in allGames
+                           where g.Price >= criteria.MinPrice
+                           select g;
+            }
+
+            // MaxPrice search
+            if (criteria.MaxPrice.HasValue)
+            {
+                allGames = from g
+                           in allGames
+                           where g.Price <= criteria.MaxPrice
+                           select g;
+            }
+
+            // Title Search
+            if (!string.IsNullOrWhiteSpace(criteria.Title))
+            {
+                // WHERE LEFT Title = Criteria.Title
+                allGames = from g
+                           in allGames
+                           where g.Title.StartsWith(criteria.Title)
+                           select g;
+            }
+
+            // Rating search
+            if (!string.IsNullOrWhiteSpace(criteria.Rating))
+            {
+                // WHERE Rating = criteria.rating
+                allGames = from g
+                           in allGames
+                           where g.Rating == criteria.Rating
+                           select g;
+            }
+
+            // Send final query to database to return results
+            // EF does not send query to database until it has to.
+            return await allGames.ToListAsync();
+        }
+
 
         /// <summary>
         /// Returns the total number of pages needed to have <paramref name="pAGE_SIZE"/> amount of products per page.
