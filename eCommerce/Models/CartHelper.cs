@@ -52,7 +52,7 @@ namespace eCommerce.Models
         /// </summary>
         /// <param name="g"> Videogame to be added</param>
         /// <param name="accessor"></param>
-        public static void Add(VideoGame g, IHttpContextAccessor accessor)
+        public static void Add( IHttpContextAccessor accessor, VideoGame g)
         {
             List<VideoGame> games = GetGames(accessor);
 
