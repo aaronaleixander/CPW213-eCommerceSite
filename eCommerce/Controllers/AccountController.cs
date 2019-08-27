@@ -31,7 +31,7 @@ namespace eCommerce.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync(Member m)
+        public async Task<IActionResult> Register(Member m)
         {
             if (ModelState.IsValid)
             {
